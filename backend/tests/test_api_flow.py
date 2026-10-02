@@ -13,18 +13,6 @@ import pytest
 from fastapi.testclient import TestClient
 
 
-@pytest.fixture(scope="module")
-def client():
-    from app.db import init_db, wait_for_db
-    from app.jobs import job_manager
-    from app.main import app
-
-    wait_for_db()
-    init_db()
-    with TestClient(app) as c:
-        yield c, job_manager
-
-
 def _make_csv(n: int = 3 * 12 + 10, period: int = 12) -> str:
     seas = np.array([1.2, -0.5, 0.3, 2.0, -1.1, 0.8, -0.7, 0.1,
                      -0.3, 1.5, -2.2, 0.9])

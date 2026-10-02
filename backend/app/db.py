@@ -40,6 +40,7 @@ def wait_for_db(retries: int = 30, delay: float = 1.0) -> None:
 
 def init_db() -> None:
     from . import models  # noqa: F401  ensure metadata populated
+    from . import hierarchy_models  # noqa: F401  门店—区域—全网层级表
     Base.metadata.create_all(bind=engine)
 
 

@@ -21,6 +21,26 @@ RAW_SEAS = np.array(
 SEAS = RAW_SEAS - RAW_SEAS.mean()
 
 
+@pytest.fixture(autouse=True)
+def _ensure_schema():
+    """所有测试（含不经 API 的服务层测试）共享已建表的 SQLite。"""
+    from app.db import init_db, wait_for_db
+    wait_for_db()
+    init_db()
+    yield
+
+
+@pytest.fixture(scope="module")
+def client():
+    """FastAPI 进程内测试客户端 + 任务管理器（原 test_api_flow 中定义）。"""
+    from fastapi.testclient import TestClient
+    from app.jobs import job_manager
+    from app.main import app
+
+    with TestClient(app) as c:
+        yield c, job_manager
+
+
 @pytest.fixture
 def period() -> int:
     return PERIOD

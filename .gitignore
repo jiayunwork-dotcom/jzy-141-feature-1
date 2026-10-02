@@ -3,8 +3,10 @@
 node_modules/
 venv/
 .venv/
+.deps/
 __pycache__/
 *.pyc
+*.db
 dist/
 build/
 *.egg-info/
