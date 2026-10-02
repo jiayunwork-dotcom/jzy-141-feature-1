@@ -3,8 +3,13 @@ import type {
   BacktestResult,
   FitRequest,
   FitResult,
+  HierarchyBacktestRequest,
+  HierarchyBacktestResult,
+  HierarchyForecastRequest,
+  HierarchyForecastResult,
   Job,
   Series,
+  TreeInfo,
 } from "./types";
 
 const BASE = "/api";
@@ -87,4 +92,64 @@ export const apiClient = {
     request<BacktestResult>(`/backtests/${id}`),
 
   getJob: (id: string) => request<Job>(`/jobs/${id}`),
+
+  // -------------------------------------------------------------- hierarchy
+
+  listTrees: () => request<TreeInfo[]>("/hierarchy/trees"),
+
+  createTree: (name: string) =>
+    request<TreeInfo>("/hierarchy/trees", {
+      method: "POST",
+      body: JSON.stringify({ name }),
+    }),
+
+  getTree: (id: number) => request<TreeInfo>(`/hierarchy/trees/${id}`),
+
+  addTreeNode: (
+    treeId: number,
+    payload: {
+      parent_id: number;
+      kind: "region" | "store";
+      name: string;
+      series_id?: number | null;
+    }
+  ) =>
+    request(`/hierarchy/trees/${treeId}/nodes`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+
+  removeTreeNode: (treeId: number, nodeId: number) =>
+    request<{ deleted: number }>(
+      `/hierarchy/trees/${treeId}/nodes/${nodeId}`,
+      { method: "DELETE" }
+    ),
+
+  startHierarchyForecast: (payload: HierarchyForecastRequest) =>
+    request<Job>("/hierarchy/forecasts", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+
+  listHierarchyForecasts: (treeId: number) =>
+    request<HierarchyForecastResult[]>(
+      `/hierarchy/trees/${treeId}/forecasts`
+    ),
+
+  getHierarchyForecast: (id: number) =>
+    request<HierarchyForecastResult>(`/hierarchy/forecasts/${id}`),
+
+  startHierarchyBacktest: (payload: HierarchyBacktestRequest) =>
+    request<Job>("/hierarchy/backtests", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+
+  listHierarchyBacktests: (treeId: number) =>
+    request<HierarchyBacktestResult[]>(
+      `/hierarchy/trees/${treeId}/backtests`
+    ),
+
+  getHierarchyBacktest: (id: number) =>
+    request<HierarchyBacktestResult>(`/hierarchy/backtests/${id}`),
 };

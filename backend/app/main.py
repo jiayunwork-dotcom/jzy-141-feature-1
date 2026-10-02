@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from .db import init_db, wait_for_db
 from .kernels.hw import ModelError
 from .routers import backtests, fits, jobs, series
+from .hierarchy.router import router as hierarchy_router
 
 app = FastAPI(title="补货预测 Holt-Winters 工具", version="1.0.0")
 
@@ -21,6 +22,7 @@ app.add_middleware(
 @app.on_event("startup")
 def _startup() -> None:
     wait_for_db()
+    from .hierarchy import models  # noqa: F401  register hierarchy tables
     init_db()
 
 
@@ -39,3 +41,4 @@ app.include_router(series.router)
 app.include_router(fits.router)
 app.include_router(jobs.router)
 app.include_router(backtests.router)
+app.include_router(hierarchy_router)

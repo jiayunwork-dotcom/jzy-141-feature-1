@@ -2,6 +2,7 @@ import { NavLink, Navigate, Route, Routes } from "react-router-dom";
 import SeriesListPage from "./pages/SeriesListPage";
 import FitPage from "./pages/FitPage";
 import BacktestPage from "./pages/BacktestPage";
+import HierarchyPage from "./pages/HierarchyPage";
 
 export default function App() {
   return (
@@ -13,6 +14,9 @@ export default function App() {
           <NavLink to="/series" className={({ isActive }) => (isActive ? "active" : "")}>
             序列列表
           </NavLink>
+          <NavLink to="/hierarchy" className={({ isActive }) => (isActive ? "active" : "")}>
+            门店—区域—全网
+          </NavLink>
         </nav>
       </aside>
       <main className="content">
@@ -21,6 +25,7 @@ export default function App() {
           <Route path="/series" element={<SeriesListPage />} />
           <Route path="/series/:seriesId/fit" element={<FitPage />} />
           <Route path="/series/:seriesId/backtest" element={<BacktestPage />} />
+          <Route path="/hierarchy" element={<HierarchyPage />} />
         </Routes>
       </main>
     </div>
